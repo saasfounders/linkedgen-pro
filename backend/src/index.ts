@@ -10,7 +10,7 @@ import { telegramRoutes } from './routes/telegram';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = parseInt(process.env.PORT || '5000', 10);
 
 app.use(cors({
   origin: process.env.APP_URL || 'http://localhost:3000',
@@ -29,8 +29,11 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV}`);
+  console.log(`Database URL configured: ${process.env.DATABASE_URL ? 'Yes' : 'No'}`);
+  console.log(`JWT Secret configured: ${process.env.JWT_SECRET ? 'Yes' : 'No'}`);
 });
 
 export default app;
