@@ -4,9 +4,21 @@ import OpenAI from 'openai';
 import { query } from '../utils/database';
 import { AuthRequest } from '../middleware/auth';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let openai: OpenAI | null = null;
+
+const getOpenAIClient = (): OpenAI | null => {
+  if (!process.env.OPENAI_API_KEY) {
+    return null;
+  }
+  
+  if (!openai) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  
+  return openai;
+};
 
 export const getMessages = async (req: AuthRequest, res: Response) => {
   try {
@@ -59,7 +71,12 @@ export const generateMessage = async (req: AuthRequest, res: Response) => {
     Keep it under 300 characters for LinkedIn messaging limits.`;
 
     try {
-      const completion = await openai.chat.completions.create({
+      const openaiClient = getOpenAIClient();
+      if (!openaiClient) {
+        throw new Error('OpenAI API key not configured');
+      }
+      
+      const completion = await openaiClient.chat.completions.create({
         model: process.env.OPENAI_MODEL || 'gpt-4o',
         messages: [
           {
