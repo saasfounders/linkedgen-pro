@@ -5,15 +5,9 @@ import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Settings, Key, Bell, User, Save } from 'lucide-react';
+import { Bell, User, Save } from 'lucide-react';
 
 export default function SettingsPage() {
-  const [apiKeys, setApiKeys] = useState({
-    openai: '',
-    apollo: '',
-    telegram: '',
-    gumroad: ''
-  });
   
   const [profile, setProfile] = useState({
     username: '',
@@ -30,15 +24,6 @@ export default function SettingsPage() {
     messageReplies: true
   });
 
-  const handleApiKeySubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      console.log('Saving API keys:', apiKeys);
-      alert('API keys saved successfully!');
-    } catch (error) {
-      console.error('Failed to save API keys:', error);
-    }
-  };
 
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,88 +55,11 @@ export default function SettingsPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
           <p className="mt-2 text-gray-600">
-            Manage your account settings and API integrations
+            Manage your account settings and preferences
           </p>
         </div>
 
         <div className="space-y-6">
-          {/* API Keys Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Key className="h-5 w-5 mr-2" />
-                API Keys
-              </CardTitle>
-              <CardDescription>
-                Configure your API keys for external integrations
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleApiKeySubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    OpenAI API Key
-                  </label>
-                  <Input
-                    type="password"
-                    value={apiKeys.openai}
-                    onChange={(e) => setApiKeys(prev => ({ ...prev, openai: e.target.value }))}
-                    placeholder="sk-..."
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Required for AI message generation
-                  </p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Apollo API Key
-                  </label>
-                  <Input
-                    type="password"
-                    value={apiKeys.apollo}
-                    onChange={(e) => setApiKeys(prev => ({ ...prev, apollo: e.target.value }))}
-                    placeholder="Enter Apollo API key"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Required for lead generation
-                  </p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Telegram Bot Token
-                  </label>
-                  <Input
-                    type="password"
-                    value={apiKeys.telegram}
-                    onChange={(e) => setApiKeys(prev => ({ ...prev, telegram: e.target.value }))}
-                    placeholder="Enter Telegram bot token"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Optional: For Telegram notifications
-                  </p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Gumroad API Key
-                  </label>
-                  <Input
-                    type="password"
-                    value={apiKeys.gumroad}
-                    onChange={(e) => setApiKeys(prev => ({ ...prev, gumroad: e.target.value }))}
-                    placeholder="Enter Gumroad API key"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Required for billing integration
-                  </p>
-                </div>
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                  <Save className="h-4 w-4 mr-2" />
-                  Save API Keys
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-
           {/* Profile Section */}
           <Card>
             <CardHeader>

@@ -6,7 +6,7 @@ import { leadRoutes } from './routes/leads';
 import { messageRoutes } from './routes/messages';
 import { icpRoutes } from './routes/icp';
 import { telegramRoutes } from './routes/telegram';
-import { errorRoutes } from './routes/errors';
+import { adminRoutes } from './routes/admin';
 
 dotenv.config();
 
@@ -61,7 +61,7 @@ app.use('/api/leads', leadRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/icp', icpRoutes);
 app.use('/api/telegram', telegramRoutes);
-app.use('/api/errors', errorRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
