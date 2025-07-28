@@ -13,8 +13,14 @@ const app = express();
 const PORT = parseInt(process.env.PORT || '10000', 10);
 
 app.use(cors({
-  origin: process.env.APP_URL || 'http://localhost:3000',
-  credentials: true
+  origin: [
+    process.env.APP_URL || 'http://localhost:3000',
+    'https://saas-deployment-app-5vor3r1d.devinapps.com',
+    /\.devinapps\.com$/
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
