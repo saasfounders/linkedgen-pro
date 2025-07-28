@@ -4,6 +4,7 @@ services:
     env: node
     buildCommand: npm ci && npm run build
     startCommand: npm start
+    plan: free
     envVars:
       - key: NODE_ENV
         value: production
@@ -14,7 +15,9 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: PORT
-        value: 5000
+        value: 10000
+      - key: APP_URL
+        value: https://saas-deployment-app-5vor3r1d.devinapps.com
 
 databases:
   - name: linkedgen-postgres
