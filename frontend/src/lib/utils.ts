@@ -51,8 +51,8 @@ export const apiRequest = async (endpoint: string, options: RequestInit = {}, re
 
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const cacheBuster = `?_t=${Date.now()}&_r=${requestId}&_a=${attempt}&_v=${process.env.NEXT_PUBLIC_DEPLOYMENT_VERSION || 'dev'}`;
-      const url = `${API_URL}${endpoint}${endpoint.includes('?') ? '&' : ''}${cacheBuster.substring(1)}`;
+      const cacheBuster = `_t=${Date.now()}&_r=${requestId}&_a=${attempt}&_v=${process.env.NEXT_PUBLIC_DEPLOYMENT_VERSION || 'dev'}`;
+      const url = `${API_URL}${endpoint}${endpoint.includes('?') ? '&' : '?'}${cacheBuster}`;
       
       console.log(`🚀 API Request (attempt ${attempt + 1}/${retries + 1}):`, {
         requestId,
