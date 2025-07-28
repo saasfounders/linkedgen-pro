@@ -31,10 +31,32 @@ export default function RegisterPage() {
     }
 
     try {
+      console.log('🔐 Starting registration process...', { email, username });
       await register(email, username, password);
+      console.log('✅ Registration successful, redirecting to dashboard...');
       router.push('/dashboard');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Registration failed');
+      console.error('❌ Registration failed:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Registration failed';
+      setError(`Registration error: ${errorMessage}`);
+      
+      if (err instanceof Error) {
+        console.error('🔍 Error details for support:', {
+          error: err.message,
+          stack: err.stack,
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          url: window.location.href,
+          deploymentVersion: process.env.NEXT_PUBLIC_DEPLOYMENT_VERSION
+        });
+        
+        if (err.message.includes('Request ID:')) {
+          const requestIdMatch = err.message.match(/Request ID: ([^)]+)/);
+          if (requestIdMatch) {
+            setError(`Registration failed. Please try again. If the problem persists, contact support with error ID: ${requestIdMatch[1]}`);
+          }
+        }
+      }
     } finally {
       setLoading(false);
     }

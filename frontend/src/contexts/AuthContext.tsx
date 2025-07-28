@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { apiRequest } from '@/lib/utils';
+import { apiRequest, API_URL } from '@/lib/utils';
 
 interface User {
   id: string;
@@ -63,13 +63,61 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const register = async (email: string, username: string, password: string) => {
-    const response = await apiRequest('/api/auth/register', {
-      method: 'POST',
-      body: JSON.stringify({ email, username, password }),
-    });
-    
-    localStorage.setItem('token', response.token);
-    setUser(response.user);
+    try {
+      console.log('🔐 Starting primary registration process...', { email, username });
+      
+      const response = await apiRequest('/api/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ email, username, password }),
+      });
+      
+      console.log('✅ Primary registration successful');
+      localStorage.setItem('token', response.token);
+      setUser(response.user);
+      
+    } catch (primaryError: unknown) {
+      console.error('❌ Primary registration failed, trying fallback...', primaryError);
+      
+      try {
+        console.log('🔄 Attempting fallback registration...');
+        
+        const fallbackData = await fetch(`${API_URL}/api/auth/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'X-Fallback-Request': 'true',
+            'X-Request-ID': `fallback-${Date.now()}`
+          },
+          body: JSON.stringify({ email, username, password }),
+          signal: AbortSignal.timeout(30000)
+        });
+        
+        if (!fallbackData.ok) {
+          const errorText = await fallbackData.text();
+          throw new Error(`Fallback registration failed: ${fallbackData.status} ${errorText}`);
+        }
+        
+        const response = await fallbackData.json();
+        console.log('✅ Fallback registration successful');
+        localStorage.setItem('token', response.token);
+        setUser(response.user);
+        
+      } catch (fallbackError: unknown) {
+        const primaryMsg = primaryError instanceof Error ? primaryError.message : 'Unknown primary error';
+        const fallbackMsg = fallbackError instanceof Error ? fallbackError.message : 'Unknown fallback error';
+        
+        console.error('❌ Both primary and fallback registration failed:', {
+          primaryError: primaryMsg,
+          fallbackError: fallbackMsg
+        });
+        
+        const errorMessage = `Registration failed: ${primaryMsg}. Fallback also failed: ${fallbackMsg}. Please try again or contact support.`;
+        throw new Error(errorMessage);
+      }
+    }
   };
 
   const logout = () => {
